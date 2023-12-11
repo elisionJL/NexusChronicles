@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae9a71600499cb444bea3a3c3e08d786, type: 3}
+  m_Name: Backstab
+  m_EditorClassIdentifier: 
+  skillName: BackStab
+  description: 'Back Stab
+
+    -Behind, Extra Damage'
+  dmgMultiplier: 0.4
+  cooldownUsingTime: 1
+  timeCooldown: 25
+  skillType: 0
+  skillTargetting: 1
+  conditional: 1
+  conditionalType: 1
+  conitionalBonus: 0.7
+  skillParticleGameObject: {fileID: 4460576771157064469, guid: 1dbc28e2114a85b46a545bcf3a36e6da,
+    type: 3}
+  isHealing: 0
+  aggroGen: 10

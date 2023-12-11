@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e4e49ab23bef2547ae753b9aa5f369f, type: 3}
+  m_Name: Defender
+  m_EditorClassIdentifier: 
+  baseHp: 150
+  baseAtk: 5
+  MaxHp: 8000
+  MaxAtk: 250
+  range: 4
+  attackSpeed: 1
+  characterClass: 1
+  skillList:
+  - {fileID: 11400000, guid: fa59c0b5f3380bc4a8e932f34d7e57fb, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
