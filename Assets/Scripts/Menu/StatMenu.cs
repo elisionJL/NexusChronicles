@@ -9,7 +9,7 @@ public class StatMenu : MonoBehaviour
     [SerializeField] TMP_Text cName,role, hp,  atk, def, range;
     [SerializeField] CharacterData[] characterDatas = new CharacterData[4];
     [SerializeField] GameObject[] selectHighlights = new GameObject[2];
-    enum Selection
+    [System.Serializable]public enum Selection
     {
         EQUIPMENT,
         BACK
@@ -28,13 +28,15 @@ public class StatMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //go down the list
         if (Input.GetKeyUp(KeyCode.S))
         {
             selectHighlights[(int)selectIndex].SetActive(false);
             selectIndex =  ++selectIndex&Selection.BACK;
             selectHighlights[(int)selectIndex].SetActive(true);
         }
-        if (Input.GetKeyUp(KeyCode.S))
+        //go up the list
+        if (Input.GetKeyUp(KeyCode.W))
         {
             selectHighlights[(int)selectIndex].SetActive(false);
             selectIndex--;
@@ -44,11 +46,20 @@ public class StatMenu : MonoBehaviour
             }
             selectHighlights[(int)selectIndex].SetActive(true);
         }
-        if (Input.GetKeyUp(KeyCode.Return))
+        if (Input.GetKeyUp(KeyCode.Q))
+        {
+            GoLeft();
+        }
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            GoRight();
+        }
+            if (Input.GetKeyUp(KeyCode.Return))
         {
             switch (selectIndex)
             {
                 case Selection.BACK:
+                    ButtonClick(selectIndex);
                     break;
                 default:
                     break;
@@ -59,6 +70,9 @@ public class StatMenu : MonoBehaviour
     {
         characterPortraits[0].EnableHightlight();
         characterIndex = 0;
+        selectHighlights[(int)selectIndex].SetActive(false);
+        selectIndex = Selection.EQUIPMENT;
+        selectHighlights[(int)selectIndex].SetActive(true);
     }
     public void GoRight()
     {
@@ -92,5 +106,39 @@ public class StatMenu : MonoBehaviour
         atk.text = cData.LevelAtk + "";
         def.text = cData.characterRole.damageReduction + "%";
         range.text = cData.range + "";
+    }
+    public void ButtonClick(int buttonSelection)
+    {
+            switch ((Selection)buttonSelection)
+            {
+                case Selection.EQUIPMENT:
+                    break;
+                case Selection.BACK:
+                    UIManager.instance.BackToMenu();
+                    break;
+                default:
+                    break;
+            }
+    }
+    public void ButtonClick(Selection buttonSelection)
+    {
+        switch (buttonSelection)
+        {
+            case Selection.EQUIPMENT:
+                break;
+            case Selection.BACK:
+                UIManager.instance.BackToMenu();
+                break;
+            default:
+                break;
+        }
+    }
+    public void ButtonHoverEnter(int buttonSelection)
+    {
+        selectHighlights[buttonSelection].SetActive(true);
+    }
+    public void ButtonHoverExit(int buttonSelection)
+    {
+        selectHighlights[buttonSelection].SetActive(false);
     }
 }

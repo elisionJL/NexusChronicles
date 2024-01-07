@@ -35,6 +35,8 @@ public class PlayerController : MonoBehaviour
         //character cannot move when downed and in the middle of usign their skill and attack
         if (stats.currentState <= CharacterData.STATES.MOVING)
         {
+            if (UIManager.instance.menuIsOpen)
+                return;
             GetMovementInput();
         }
         //the time between attacks

@@ -11,8 +11,9 @@ public class UIManager : MonoBehaviour
     public bool menuIsOpen = false;
     [SerializeField]GameObject questPanel;
     [SerializeField]SkillUIBlock[] skillUI = new SkillUIBlock[3];
-    [SerializeField] GameObject MenuCharacterUIPanel;
+    [SerializeField] GameObject CharacterMenuPanel;
     [SerializeField] GameObject CharacterStatsUIPanel;
+    GameObject currentOpenMenu = null;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -56,16 +57,77 @@ public class UIManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.V))
         {
-            if (!menuIsOpen)
+            if (!menuIsOpen && currentOpenMenu == null)
             {
                 menuIsOpen = true;
                 questPanel.SetActive(true);
+                currentOpenMenu = questPanel;
             }
-            else
+            else if (menuIsOpen && currentOpenMenu == questPanel)
             {
                 menuIsOpen = false;
                 questPanel.SetActive(false);
+                currentOpenMenu = null;
             }
         }
+        if (Input.GetKeyUp(KeyCode.Escape))
+        {
+            //check if a menu is open
+            if (menuIsOpen)
+            {
+                //if the player is on the main menu, disable the menu
+                if(currentOpenMenu == CharacterMenuPanel)
+                {
+                    menuIsOpen = false;
+                    currentOpenMenu.SetActive(false);
+                    currentOpenMenu = null;
+                }
+                if (currentOpenMenu == questPanel)
+                {
+                    menuIsOpen = false;
+                    questPanel.SetActive(false);
+                    currentOpenMenu = null;
+                }
+                if (currentOpenMenu == CharacterStatsUIPanel)
+                {
+                    BackToMenu();
+                }
+            }
+            //if no menu is open
+            else{
+                if (currentOpenMenu == null)
+                {
+                    menuIsOpen = true;
+                    CharacterMenuPanel.SetActive(true);
+                    currentOpenMenu = CharacterMenuPanel;
+                }
+            }
+        }
+    }
+    public void ExitMenu()
+    {
+        //check if a menu is open
+        if (menuIsOpen)
+        {
+            //if the player is on the main menu, disable the menu
+            if (currentOpenMenu == CharacterMenuPanel)
+            {
+                menuIsOpen = false;
+                currentOpenMenu.SetActive(false);
+                currentOpenMenu = null;
+            }
+        }
+    }
+    public void BackToMenu()
+    {
+        currentOpenMenu.SetActive(false);
+        CharacterMenuPanel.SetActive(true);
+        currentOpenMenu = CharacterMenuPanel;
+    }
+    public void OpenStatMenu()
+    {
+        currentOpenMenu.SetActive(false);
+        CharacterStatsUIPanel.SetActive(true);
+        currentOpenMenu = CharacterStatsUIPanel;
     }
 }
