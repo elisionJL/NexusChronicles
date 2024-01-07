@@ -19,6 +19,8 @@ MonoBehaviour:
   range: 4
   attackSpeed: 1
   characterClass: 1
+  roleName: Defender
+  damageReduction: 20
   skillList:
   - {fileID: 11400000, guid: fa59c0b5f3380bc4a8e932f34d7e57fb, type: 2}
   - {fileID: 0}

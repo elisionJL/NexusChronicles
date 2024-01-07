@@ -5,11 +5,14 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     public static UIManager instance;
-    [SerializeField ]PlayerUI[] playerUIArray = new PlayerUI[4];
+    [SerializeField ]PlayerUI[] playerDisplayUIArray = new PlayerUI[4];
+    [SerializeField] PlayerMenuUI[] playerMenuUIArray = new PlayerMenuUI[4];
     PartyManager partyManager;
     public bool menuIsOpen = false;
     [SerializeField]GameObject questPanel;
     [SerializeField]SkillUIBlock[] skillUI = new SkillUIBlock[3];
+    [SerializeField] GameObject MenuCharacterUIPanel;
+    [SerializeField] GameObject CharacterStatsUIPanel;
     // Start is called before the first frame update
     private void Awake()
     {
@@ -38,10 +41,16 @@ public class UIManager : MonoBehaviour
         }
         for (int i = 0; i < 4; ++i)
         {
-            playerUIArray[i].SetStats(partyManager.memberRef[partyManager.partyMembers[i]].playerNavScript.GetCharacterData());
+            playerDisplayUIArray[i].SetStats(partyManager.memberRef[partyManager.partyMembers[i]].playerNavScript.GetCharacterData());
         }
     }
-
+    public void setMenuUI()
+    {
+        for (int i = 0; i < 4; ++i)
+        {
+            playerMenuUIArray[i].SetStats(partyManager.memberRef[partyManager.partyMembers[i]].playerNavScript.GetCharacterData());
+        }
+    }
     // Update is called once per frame
     void Update()
     {

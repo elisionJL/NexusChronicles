@@ -52,6 +52,7 @@ public class PartyManager : MonoBehaviour
             instance = this;
         }
     }
+    //on object initial activation
     private void Start()
     {
         for (int i = 0; i < partyMembers.Length; ++i)
@@ -65,8 +66,13 @@ public class PartyManager : MonoBehaviour
                     )
                 );
         }
+        //make sure the leader is 
         SwitchLeader();
+        //set the hp UI during gameplay
         UIManager.instance.SetPartyUI();
+        //set the UI for when menu is opened
+        UIManager.instance.setMenuUI();
+        //initialise the aggroo values 
         CombatManager.instance.StartAggro();
     }
     public void EnableCameraReset()
@@ -90,23 +96,30 @@ public class PartyManager : MonoBehaviour
             memberRef[member].characterData.ResetSkillsCD();
         }
     }
+    //makes the camera follow the leader and enable the AI on the other part members
     public void SwitchLeader()
     {
         int count = 1;
         for (int i = 0; i < partyMembers.Length; ++i)
         {
             Transform member = partyMembers[i];
+            //Check if the charcater is the leader we want
             if(member == leader)
             {
+                //set the camera to follow and look at
                 playerCam.Follow = leader;
+                //need to get the lookat object in the charcater
                 playerCam.LookAt = memberRef[leader].playerNavScript.getLookAt();
+                //Disable the Ai script and enable the player input script
                 memberRef[leader].IsLeader();
+                //change the follow positions to follow the leader
                 partyPos[0].parent = leader;
                 partyPos[0].position = leader.position;
                 partyPos[0].localRotation = Quaternion.identity;
             }
             else
             {
+                //disable the player input script and enable the Ai script
                 memberRef[member].IsNPC(count++);
             }
         }

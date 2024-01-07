@@ -19,6 +19,8 @@ MonoBehaviour:
   range: 10
   attackSpeed: 3
   characterClass: 2
+  roleName: Healer
+  damageReduction: 0
   skillList:
   - {fileID: 11400000, guid: a3ce75eb32146a54fab11b036f863230, type: 2}
   - {fileID: 0}

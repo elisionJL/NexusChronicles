@@ -32,7 +32,7 @@ public class CharacterData : MonoBehaviour
     public STATES currentState = STATES.IDLING;
     #endregion Stats
 
-    public virtual void Start()
+    public virtual void Awake()
     {
         //this forumla is taken from xenoblade chronicles 3 but instead of the max level used being 99 mine is 100
         levelHp = characterRole.baseHp + (characterRole.MaxHp - characterRole.baseHp) * (level - 1) / 99;
@@ -42,6 +42,7 @@ public class CharacterData : MonoBehaviour
         sqrRange = Mathf.Pow(characterRole.range, 2);
         range = characterRole.range;
         attackspeed = characterRole.attackSpeed;
+        resistance = 1 - (characterRole.damageReduction / 100);
         for(int i = 0; i < characterRole.skillList.Length; ++i)
         {
             if(characterRole.skillList[i] == null)
@@ -87,7 +88,7 @@ public class CharacterData : MonoBehaviour
     }
     public void LoseHealth(float damage)
     {
-        hp -= damage;
+        hp -= damage * resistance;
         if(hp < 0)
         {
             hp = 0;

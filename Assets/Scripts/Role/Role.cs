@@ -17,5 +17,7 @@ public class Role : ScriptableObject
     public float range;
     public float attackSpeed;
     public ROLE characterClass;
+    public string roleName;
+    public float damageReduction;
     public Skill[] skillList = new Skill[3];
 }

@@ -19,6 +19,8 @@ MonoBehaviour:
   range: 7
   attackSpeed: 1.5
   characterClass: 0
+  roleName: Attacker
+  damageReduction: 0
   skillList:
   - {fileID: 11400000, guid: ec0aaa08d24e93642a8038c05556a460, type: 2}
   - {fileID: 11400000, guid: b65bac5a61c13c54384dc3377fa7f6c9, type: 2}
