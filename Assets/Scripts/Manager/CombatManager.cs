@@ -152,55 +152,109 @@ public class CombatManager : MonoBehaviour
         if (inCombat)
             partyManager.SwitchCombatLookAt();
     }
-    private void OnTriggerEnter(Collider other)
+
+    //Enemy calls this when Player goes into the range
+    public void EnemyEntersRange(EnemyData temp)
     {
-        if (other.CompareTag("Enemy"))
+        if (enemiesInRangeOfPlayer.Contains(temp))
         {
-            Debug.Log("Enemy Entered");
-            EnemyData temp = enemiesOnMap[other.transform];
-            //for some reason it sometimes adds the same game object into the list.
-            if (enemiesInRangeOfPlayer.Contains(temp))
+            return;
+        }
+        if (enemiesInRangeOfPlayer.Count == 0)
+        {
+            enemyPointer.gameObject.SetActive(true);
+            enemiesInRangeOfPlayer.Add(temp);
+            SwitchEnemyPointer(temp);
+        }
+        else
+            enemiesInRangeOfPlayer.Add(temp);
+        temp.enemyAI.inRangeOfPlayer = true;
+        temp.enemyAI.EnableAggroLine();
+    }
+
+    //Enemy Calls this when Player goes outside of the range
+    public void EnemyExitsRange(EnemyData temp)
+    {
+        //Debug.Log("Enemy exits range: " + temp.gameObject);
+        enemiesInRangeOfPlayer.Remove(temp);
+        if (enemiesInRangeOfPlayer.Count == 0)
+        {
+            enemyPointer.SetParent(null, true);
+            enemyPointer.gameObject.SetActive(false);
+            targettedEnemy = null;
+            enemiesInRangeOfPlayer.TrimExcess();
+            ResetAggro();
+            partyManager.ResetAllSkillCD();
+
+            if (inCombat)
             {
-                return;
+                inCombat = !inCombat;
+                partyManager.ToggleCamera(inCombat);
             }
-            if (enemiesInRangeOfPlayer.Count == 0)
-            {
-                enemyPointer.gameObject.SetActive(true);
-                enemiesInRangeOfPlayer.Add(temp);
-                SwitchEnemyPointer(temp);
-            }
-            else
-                enemiesInRangeOfPlayer.Add(temp);
-            temp.enemyAI.inRangeOfPlayer = true;
+        }
+        else
+        {
+            temp = enemiesInRangeOfPlayer[0];
+            SwitchEnemyPointer(temp);
+        }
+        //temp.enemyAI.inRangeOfPlayer = false;
+        temp.enemyAI.DisableAggroLine();
+        temp.enemyAI.currentTarget = null;
+    }
+    //private void OnTriggerEnter(Collider other)
+    //{
+    //    if (other.CompareTag("Enemy"))
+    //    {
+    //        Debug.Log("Enemy Entered " + gameObject);
+
+    //        EnemyData temp = enemiesOnMap[other.transform];
+    //        //for some reason it sometimes adds the same game object into the list.
+    //        if (enemiesInRangeOfPlayer.Contains(temp))
+    //        {
+    //            return;
+    //        }
+    //        if (enemiesInRangeOfPlayer.Count == 0)
+    //        {
+    //            enemyPointer.gameObject.SetActive(true);
+    //            enemiesInRangeOfPlayer.Add(temp);
+    //            SwitchEnemyPointer(temp);
+    //        }
+    //        else
+    //            enemiesInRangeOfPlayer.Add(temp);
+    //        temp.enemyAI.inRangeOfPlayer = true;
+    //        temp.enemyAI.EnableAggroLine();
            
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.CompareTag("Enemy"))
-        {
-            EnemyData temp = enemiesOnMap[other.transform];
-            enemiesInRangeOfPlayer.Remove(temp);
-            if (enemiesInRangeOfPlayer.Count == 0)
-            {
-                enemyPointer.SetParent(null, true);
-                enemyPointer.gameObject.SetActive(false);
-                targettedEnemy = null;
-                enemiesInRangeOfPlayer.TrimExcess();
-                ResetAggro();
-                partyManager.ResetAllSkillCD();
-                if (inCombat)
-                {
-                    inCombat = !inCombat;
-                    partyManager.ToggleCamera(inCombat);
-                }
-            }
-            else
-            {
-                temp = enemiesInRangeOfPlayer[0];
-                SwitchEnemyPointer(temp);
-            }
-            temp.enemyAI.inRangeOfPlayer = false;
-        }
-    }
+    //    }
+    //}
+    //private void OnTriggerExit(Collider other)
+    //{
+    //    if (other.CompareTag("Enemy"))
+    //    {
+    //        EnemyData temp = enemiesOnMap[other.transform];
+    //        enemiesInRangeOfPlayer.Remove(temp);
+    //        if (enemiesInRangeOfPlayer.Count == 0)
+    //        {
+    //            enemyPointer.SetParent(null, true);
+    //            enemyPointer.gameObject.SetActive(false);
+    //            targettedEnemy = null;
+    //            enemiesInRangeOfPlayer.TrimExcess();
+    //            ResetAggro();
+    //            partyManager.ResetAllSkillCD();
+                
+    //            if (inCombat)
+    //            {
+    //                inCombat = !inCombat;
+    //                partyManager.ToggleCamera(inCombat);
+    //            }
+    //        }
+    //        else
+    //        {
+    //            temp = enemiesInRangeOfPlayer[0];
+    //            SwitchEnemyPointer(temp);
+    //        }
+    //        temp.enemyAI.inRangeOfPlayer = false;
+    //        temp.enemyAI.DisableAggroLine();
+    //        temp.enemyAI.currentTarget = null;
+    //    }
+    //}
 }

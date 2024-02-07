@@ -15,10 +15,10 @@ TagManager:
   - Environment
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
+  - Character
+  - OuterCollider
+  - MinimapLayer
+  - MinimapCull
   - 
   - 
   - 

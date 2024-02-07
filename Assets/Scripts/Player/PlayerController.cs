@@ -1,14 +1,18 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Cinemachine;
 public class PlayerController : MonoBehaviour
 {
     Animator animator;
     public Transform cameraTrans;
     float speed = 5;
+    [SerializeField] float mouseYSpeed = 0.5f, mouseXSpeed = 100;
     Vector3 forward;
     //this is the look at gameobject that is ON THE CHARACTERS
     [SerializeField] Transform camLookAtTarget;
     CharacterData stats;
+    CinemachineFreeLook playerCam;
+    PartyManager partyManager;
     //this sections hold the variables used in combat
     #region Combat
     CombatManager combatManager;
@@ -24,21 +28,66 @@ public class PlayerController : MonoBehaviour
     {
         combatManager = CombatManager.instance;
         SetNormalCamera();
+        partyManager = PartyManager.instance;
     }
     private void OnDisable()
     {
         combatManager = CombatManager.instance;
     }
-    // Update is called once per frame
-    void FixedUpdate()
+    private void Update()
     {
         //character cannot move when downed and in the middle of usign their skill and attack
         if (stats.currentState <= CharacterData.STATES.MOVING)
         {
             if (UIManager.instance.menuIsOpen)
+            {
+                Cursor.lockState = CursorLockMode.None;
                 return;
+            }
             GetMovementInput();
+            //when right click is first pressed
+            if (Input.GetMouseButtonDown(1))
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+            }
+            //when right click is held down
+            if (Input.GetMouseButton(1))
+            {
+                RotateWithMouse();
+            }
+            //when right click is released
+            if (Input.GetMouseButtonUp(1))
+            {
+                Cursor.lockState = CursorLockMode.None;
+            }
         }
+    }
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        ////character cannot move when downed and in the middle of usign their skill and attack
+        //if (stats.currentState <= CharacterData.STATES.MOVING)
+        //{
+        //    if (UIManager.instance.menuIsOpen)
+        //        return;
+        //    GetMovementInput();
+        //    //when right click is first pressed
+        //    if (Input.GetMouseButtonDown(1))
+        //    {
+        //        Cursor.lockState = CursorLockMode.Locked;
+        //        Debug.Log("Locked");
+        //    }
+        //    //when right click is held down
+        //    if (Input.GetMouseButton(1)) {
+        //        RotateWithMouse();
+        //    }
+        //    //when right click is released
+        //    if (Input.GetMouseButtonUp(1))
+        //    {
+        //        Cursor.lockState = CursorLockMode.Confined;
+        //        Debug.Log("confined");
+        //    }
+        //}
         //the time between attacks
         if(stats.attackTimer < stats.attackspeed && stats.currentState < CharacterData.STATES.ATTACKING)
         {
@@ -55,8 +104,6 @@ public class PlayerController : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.Alpha1) && stats.currentState <= CharacterData.STATES.MOVING )
             {
                 UseSkill(0);
-
-
             }
             if (Input.GetKeyDown(KeyCode.Alpha2) && stats.currentState <= CharacterData.STATES.MOVING)
             {
@@ -80,7 +127,14 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    
+    void RotateWithMouse()
+    {
+        PartyManager.instance.CancelCameraReset();
+        float mouseXValue = Input.GetAxis("Mouse X");
+        float mouseYValue = Input.GetAxis("Mouse Y");
+        playerCam.m_XAxis.Value = Mathf.Lerp(playerCam.m_XAxis.Value, playerCam.m_XAxis.Value + mouseXValue * mouseXSpeed, 5 * Time.deltaTime);
+        playerCam.m_YAxis.Value = Mathf.Lerp(playerCam.m_YAxis.Value, playerCam.m_YAxis.Value - mouseYValue * mouseYSpeed, Time.deltaTime);
+    }
     void GetMovementInput()
     {
         //get input
@@ -97,6 +151,7 @@ public class PlayerController : MonoBehaviour
         //else set state to moving and trigger move animation
         else
         {
+            partyManager.CancelCameraReset();
             stats.currentState = CharacterData.STATES.MOVING;
             animator.SetBool("Moving", true);
             animator.SetFloat("Velocity", 1);
@@ -113,6 +168,7 @@ public class PlayerController : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(direction.normalized);
         //move
         transform.position += direction.normalized * Time.deltaTime * speed;
+        partyManager.MoveMinimap(transform.position);
     }
     //try to use the skill
     //skill num refers to the skill index in the CharacterData skill array;
@@ -166,6 +222,7 @@ public class PlayerController : MonoBehaviour
     //changes the camera used to the movement camera
     public void SetNormalCamera()
     {
+        playerCam = PartyManager.instance.GetPlayerCamera();
         cameraTrans = PartyManager.instance.GetPlayerCameraTransform();
     }
 

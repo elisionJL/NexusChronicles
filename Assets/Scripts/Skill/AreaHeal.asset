@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: AreaHeal
   m_EditorClassIdentifier: 
   skillName: Area Heal
-  description: "Area Heal \n-AOE Heal"
+  description: Area Heal
   dmgMultiplier: 3
   cooldownUsingTime: 1
   timeCooldown: 10

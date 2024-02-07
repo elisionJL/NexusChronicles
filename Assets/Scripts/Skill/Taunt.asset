@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: Taunt
   m_EditorClassIdentifier: 
   skillName: Taunt
-  description: 'Taunt
-
-    -AOE Taunt'
+  description: Taunt
   dmgMultiplier: 0.5
   cooldownUsingTime: 1
   timeCooldown: 15

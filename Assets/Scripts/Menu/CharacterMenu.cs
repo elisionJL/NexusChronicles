@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 public class CharacterMenu : MonoBehaviour
 {
     [SerializeField] GameObject[] selectHighlights = new GameObject[3];
@@ -12,12 +13,14 @@ public class CharacterMenu : MonoBehaviour
         BACK,
         TOTAL
     }
+    [SerializeField] Image expFG;
+    [SerializeField] TMP_Text levelText, expText,goldText;
     Selection selectIndex = Selection.STATS;
     // Start is called before the first frame update
     void Start()
     {
     }
-
+    
     // Update is called once per frame
     void Update()
     {
@@ -49,6 +52,16 @@ public class CharacterMenu : MonoBehaviour
         selectHighlights[(int)selectIndex].SetActive(false);
         selectIndex = Selection.STATS;
         selectHighlights[(int)selectIndex].SetActive(true);
+    }
+    public void UpdateExpLevel(int _level, float _currentExp, float _requiredExp)
+    {
+        levelText.text = "Lvl " + _level;
+        expText.text = "Exp: " + _currentExp + "/" + _requiredExp;
+        expFG.fillAmount = _currentExp / _requiredExp;
+    }
+    public void UpdateGold(int _gold)
+    {
+        goldText.text = "Gold:" + _gold;
     }
     public void ButtonClick(int buttonSelection)
     {

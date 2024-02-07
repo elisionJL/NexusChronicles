@@ -100,7 +100,7 @@ public class StatMenu : MonoBehaviour
     public void ChangeStatsDisplay()
     {
         CharacterData cData = characterDatas[characterIndex];
-        cName.text = cData.gameObject.name;
+        cName.text = cData.gameObject.name + " Lvl " + cData.level;
         hp.text = cData.levelHp + "";
         role.text = "Role: " + cData.characterRole.roleName;
         atk.text = cData.LevelAtk + "";

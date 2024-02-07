@@ -17,7 +17,9 @@ public class EnemyData : MonoBehaviour
     [SerializeField] SkinnedMeshRenderer sMeshRenderer;
     float sideScale;
     [SerializeField] EnemyType enemyType;
+    bool deathStarted = false;
     public EnemyAI enemyAI;
+    DamageNumberGenerator damageNumberGenerator;
     public enum STATES
     {
         IDLING = 0,
@@ -32,6 +34,7 @@ public class EnemyData : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        damageNumberGenerator = DamageNumberGenerator.instance;
         levelHp = enemyType.baseHp + (enemyType.MaxHp - enemyType.baseHp) * (level - 1) / 99;
         levelAtk = enemyType.baseAtk + (enemyType.MaxAtk - enemyType.baseAtk) * (level - 1) / 99;
         atk = levelAtk;
@@ -47,12 +50,17 @@ public class EnemyData : MonoBehaviour
         }
         else
             sideScale = Mathf.Pow(meshRenderer.bounds.size.x * 0.5f, 2);
+
     }
     public void loseHp(float damage)
     {
+        if (deathStarted)
+            return;
         hp -= damage;
+        damageNumberGenerator.GeneratePlayerHit(transform.position, "-" + (int)damage);
         if (hp <= 0)
         {
+            deathStarted = true;
             CombatManager.instance.RemoveEnemy(transform);
         }
     }

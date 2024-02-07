@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: HeavyStrike
   m_EditorClassIdentifier: 
   skillName: Heavy Strike
-  description: 'Heavy Strike
-
-    -Side, Extra Dmg'
+  description: Heavy Strike
   dmgMultiplier: 0.5
   cooldownUsingTime: 1
   timeCooldown: 20

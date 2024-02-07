@@ -24,7 +24,14 @@ public class Quest : ScriptableObject
     {
         return "exp: " + exp +"\n" + "gold: " + gold;
     }
-
+    public float GetExpReward()
+    {
+        return exp;
+    }
+    public int GetGoldReward()
+    {
+        return gold;
+    }
     public KillObjective[] GetObjective()
     {
         return objectives;

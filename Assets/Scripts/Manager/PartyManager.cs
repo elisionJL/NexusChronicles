@@ -10,12 +10,16 @@ public class PartyManager : MonoBehaviour
     [SerializeField] Transform leader;
     [SerializeField] CinemachineFreeLook playerCam;
     [SerializeField] CinemachineVirtualCamera playerCombatCam;
+    [SerializeField] Transform MinimapPosition;
     public Dictionary<Transform, CharacterScripts> memberRef = new Dictionary<Transform, CharacterScripts>();
 
-    float recenteringTime = 5;
+    public float recenteringTime = 5;
+    float exp,expRequired;
+    int gold ;
+    int level;
     //debug purposes
     int count = 0;
-    //just a container for the scripts in each charcater object
+    //just a container for the scripts in each character object
     public class CharacterScripts
     {
         public AIMovement navScript;
@@ -50,7 +54,12 @@ public class PartyManager : MonoBehaviour
         }
         else { 
             instance = this;
+            exp = 0;
+            expRequired = 40;
+            gold = 0;
+            level = 1;
         }
+
     }
     //on object initial activation
     private void Start()
@@ -58,11 +67,11 @@ public class PartyManager : MonoBehaviour
         for (int i = 0; i < partyMembers.Length; ++i)
         {
             Transform member = partyMembers[i];
-            memberRef.Add(member, 
+            memberRef.Add(member,
                 new CharacterScripts(
-                    member.GetComponent<AIMovement>(), 
+                    member.GetComponent<AIMovement>(),
                     member.GetComponent<PlayerController>(),
-                    member.GetComponent<CharacterData>() 
+                    member.GetComponent<CharacterData>()
                     )
                 );
         }
@@ -74,18 +83,8 @@ public class PartyManager : MonoBehaviour
         UIManager.instance.setMenuUI();
         //initialise the aggroo values 
         CombatManager.instance.StartAggro();
-    }
-    public void EnableCameraReset()
-    {
-        if (recenteringTime > 0)
-        {
-            recenteringTime -= Time.deltaTime;
-            if (recenteringTime <= 0)
-            {
-                playerCam.m_RecenterToTargetHeading.RecenterNow();
-                playerCam.m_RecenterToTargetHeading.m_enabled = true;
-            }
-        }
+
+
     }
 
     public void ResetAllSkillCD()
@@ -141,34 +140,108 @@ public class PartyManager : MonoBehaviour
     {
         return playerCam.transform;
     }
+    public CinemachineFreeLook GetPlayerCamera()
+    {
+        return playerCam;
+    }
     public Transform GetPlayerCombatCameraTransform()
     {
         SwitchCombatLookAt();
         return playerCombatCam.transform;
     }
+
+    //Switch what the camera is looking at
     public void SwitchCombatLookAt()
     {
         playerCombatCam.LookAt = CombatManager.instance.targettedEnemy.transform;
     }
+
+    //Toggle the camera between combat and non-Combat mode depending on the parameter
     public void ToggleCamera(bool inCombat)
     {
-        if(inCombat)
+        playerCam.gameObject.SetActive(!inCombat);
+        playerCombatCam.gameObject.SetActive(inCombat);
+        if (inCombat)
         {
             memberRef[leader].playerNavScript.SetCombatCamera();
+            playerCombatCam.Follow = memberRef[leader].playerNavScript.getLookAt();
         }
         else
         {
             memberRef[leader].playerNavScript.SetNormalCamera();
         }
-        playerCam.gameObject.SetActive(!inCombat);
-        playerCombatCam.gameObject.SetActive(inCombat);
     }
+
+    //return the cinemachine freelook used by the player
     public CinemachineFreeLook GetPlayerCameraFreeLook(){
         return  playerCam;
+    }
+
+    //start the countdown for the camera reset
+    public void EnableCameraReset()
+    {
+        if (recenteringTime > 0)
+        {
+            recenteringTime -= Time.deltaTime;
+            if (recenteringTime <= 0)
+            {
+                playerCam.m_RecenterToTargetHeading.m_enabled = true;
+                playerCam.m_YAxisRecentering.m_enabled = true;
+                playerCam.m_RecenterToTargetHeading.RecenterNow();
+                playerCam.m_YAxisRecentering.RecenterNow();
+            }
+        }
+    }
+
+    //cancel the camera reset if is mid reset and reset the timer;
+    public void CancelCameraReset()
+    {
+        playerCam.m_YAxisRecentering.CancelRecentering();
+        playerCam.m_RecenterToTargetHeading.CancelRecentering();
+        playerCam.m_RecenterToTargetHeading.m_enabled = false;
+        playerCam.m_YAxisRecentering.m_enabled = false;
+        recenteringTime = 5;
+    }
+
+    //move the minimapcamera with with player
+    public void MoveMinimap(Vector3 pos) 
+    {
+        pos.y = MinimapPosition.position.y;
+        MinimapPosition.position = pos;
+    }
+
+    //adds exp to the Party and increase the level if needed
+    public void AddExp(float _exp)
+    {
+        exp += _exp;
+        if(exp >= expRequired)
+        {
+            exp = Mathf.Ceil(exp - expRequired);
+            level = level + 1;
+            expRequired = 100+ (level/2)*(20*level);
+            //Debug.Log("exp:" + exp + " Required Exp: " + expRequired);
+            for(int i = 0; i < partyMembers.Length; i++)
+            {
+                memberRef[partyMembers[i]].characterData.level = level;
+                memberRef[partyMembers[i]].characterData.UpdateStats();
+                memberRef[partyMembers[i]].characterData.SetTolevel();
+            }
+            AddExp(0);
+        }
+    }
+    public void AddGold(int _gold)
+    {
+        gold += _gold;
+    }
+    public void UpdateMenu()
+    {
+        UIManager.instance.UpdateExp(level, exp, expRequired);
+        UIManager.instance.UpdateGold(gold);
     }
     // Update is called once per frame
     void Update()
     {
+        //press B
         if (Input.GetKeyDown(KeyCode.B))
         {
             count++;
@@ -176,6 +249,7 @@ public class PartyManager : MonoBehaviour
                 count = 0;
             leader = partyMembers[count];
             SwitchLeader();
+            UIManager.instance.SetSkillUI();
         }
         float valueX = Input.GetAxisRaw("Horizontal");
         float valueY = Input.GetAxisRaw("Vertical");
@@ -187,7 +261,7 @@ public class PartyManager : MonoBehaviour
         }
         else
         {
-            recenteringTime = 5;
+            CancelCameraReset();
         }
 
     }

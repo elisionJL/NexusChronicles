@@ -12,6 +12,7 @@ public class EnemyType : ScriptableObject
     {
         MUSHROOM,
         WOLF,
+        TENNARAY,
         TOTAL
     }
     public ENEMY typeOfEnemy;

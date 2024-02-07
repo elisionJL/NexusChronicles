@@ -12,6 +12,7 @@ public class QuestNPC : MonoBehaviour
     [SerializeField]bool TurnIn = false;
     Dictionary<Quest, bool> questStatus = new Dictionary<Quest, bool>();
     GameObject availableQuestIcon, completeQuestIcon;
+    Quest currentQuest = null;
     // Start is called before the first frame update
     void Start()
     {
@@ -30,14 +31,13 @@ public class QuestNPC : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.E) && entered > 0 && !UIManager.instance.menuIsOpen)
             {
-                Quest quest = GetIndexQuest();
-                if (quest == null)
+                currentQuest  = GetIndexQuest();
+                if (currentQuest == null)
                 {
                     return;
                 }
                 UIManager.instance.menuIsOpen = true;
-                questManager.OpenQuestAccept(quest);
-                questStatus[quest] = true;
+                questManager.OpenQuestAccept(currentQuest, this);
             }
         }
         else {
@@ -52,6 +52,11 @@ public class QuestNPC : MonoBehaviour
                 questManager.OpenQuestComplete(GetIndexQuest());
             }
         }
+    }
+    public void OnQuestAccepted()
+    {
+        questStatus[currentQuest] = true;
+        currentQuest = null;
     }
     void HideIcon()
     {
@@ -70,7 +75,6 @@ public class QuestNPC : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Entered");
         if (other.CompareTag("InteractionRange"))
         {
             ++entered;

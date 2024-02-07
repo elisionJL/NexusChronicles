@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48247e9e7f49f1347a142858d2ac3501, type: 3}
   m_Name: Basic
   m_EditorClassIdentifier: 
-  baseHp: 200
+  baseHp: 100
   baseAtk: 10
   MaxHp: 5000
-  MaxAtk: 140
+  MaxAtk: 100
   range: 6
   attackSpeed: 4
+  typeOfEnemy: 0

@@ -47,6 +47,7 @@ public class QuestManager : MonoBehaviour
     [SerializeField]GameObject questAccept, questComplete;
     [SerializeField] TMP_Text acceptTitle, completeButtonTitle;
     [SerializeField] Button completeButton;
+    [SerializeField] QuestNPC currentQuestNPC;
     //when asked to accept or complete what quest is being aske
     Quest currentPromptedQuest;
     List<QuestTab> questTabs = new List<QuestTab>();
@@ -69,6 +70,7 @@ public class QuestManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentQuestNPC = null;
     }
     private void OnEnable()
     {
@@ -107,6 +109,10 @@ public class QuestManager : MonoBehaviour
     }
     public void UpdateQuestrogress(EnemyType.ENEMY target,int amount)
     {
+        if (acceptedQuest.Count == 0)
+        {
+            return;
+        }
         //go through each quest
         for (int i = 0; i< acceptedQuest.Count;++i)
         {
@@ -122,15 +128,16 @@ public class QuestManager : MonoBehaviour
                         continue;
                     if (CheckCompleted(acceptedQuest[i].quest))
                     {
-                        //add the quest to completed
-                        completedQuests.Add(acceptedQuest[i].quest);
-                        //add in the rewards here
-                        //
-                        //
-                        //
+                        CompleteQuest(acceptedQuest[i].quest);
+                        ////add the quest to completed
+                        //completedQuests.Add(acceptedQuest[i].quest);
+                        ////add in the rewards here
+                        ////
+                        ////
+                        ////
 
-                        //remove the quest from accepted
-                        Remove(acceptedQuest[i].quest);
+                        ////remove the quest from accepted
+                        //Remove(acceptedQuest[i].quest);
                         break;
                     }
                 }
@@ -245,18 +252,20 @@ public class QuestManager : MonoBehaviour
     {
         //add the quest to completed
         completedQuests.Add(quest);
-
+        
         //add in the rewards here
         //
-        //
-        //
-
+        PartyManager.instance.AddExp(quest.GetExpReward());
+        PartyManager.instance.AddGold(quest.GetGoldReward());
+        PartyManager.instance.UpdateMenu();
+        UIManager.instance.CloseQuestPanel();
         //remove the quest from accepted
         Remove(quest);
     }
-    public void OpenQuestAccept(Quest quest)
+    public void OpenQuestAccept(Quest quest, QuestNPC questNPC)
     {
         currentPromptedQuest = quest;
+        currentQuestNPC = questNPC;
         questAccept.SetActive(true);
         acceptTitle.text = "Do you want to accept the quest " + '"' + currentPromptedQuest.title + '"' + "?";
 
@@ -284,6 +293,10 @@ public class QuestManager : MonoBehaviour
     }
     public void Accept()
     {
+        if(currentQuestNPC != null)
+        {
+            currentQuestNPC.OnQuestAccepted();
+        }
         Add(currentPromptedQuest);
     }
     public void TurnIn()
@@ -302,7 +315,12 @@ public class QuestManager : MonoBehaviour
     }
     public void ShowQuest(int index)
     {
+        if(acceptedQuest.Count <= index)
+        {
+            return;
+        }
         Quest quest = acceptedQuest[index].quest;
+        currentPromptedQuest = quest;
         if (CheckCompleted(quest))
         {
             completeButtonTitle.text = "Turn In";

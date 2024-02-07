@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: NextStep
   m_EditorClassIdentifier: 
   title: Next Step
-  description: Now that you are ready, continue your adventure
-  objectiveText: 'Kill Wolves: num0/10'
+  description: Now that you are ready, try fighting a tougher enemy
+  objectiveText: 'Kill Tenna Ray: num0/1'
   objectives:
-  - amount: 10
-    KillTarget: 1
+  - amount: 1
+    KillTarget: 2
   gold: 600
   exp: 300
+  completeOnRequirementMet: 1

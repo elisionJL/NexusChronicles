@@ -13,9 +13,7 @@ MonoBehaviour:
   m_Name: Crush
   m_EditorClassIdentifier: 
   skillName: Crush
-  description: 'Crush
-
-    -AOE'
+  description: Crush
   dmgMultiplier: -0.1
   cooldownUsingTime: 1
   timeCooldown: 15

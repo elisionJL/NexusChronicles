@@ -6,7 +6,7 @@ public class CharacterData : MonoBehaviour
 {
     #region Stats
     //level of the charcater
-    int level = 1;
+    public int level = 1;
     //the characters hp and atk accounting their base stats and their level
     //create a seperate variable here so that we can increase or decrease it as we like and can reset to level hp and atk easily
     public float levelHp, LevelAtk,hp,atk;
@@ -31,7 +31,8 @@ public class CharacterData : MonoBehaviour
     }
     public STATES currentState = STATES.IDLING;
     #endregion Stats
-
+    [SerializeField] Transform dmgSpawnPoint;
+    DamageNumberGenerator damageNumberGenerator;
     public virtual void Awake()
     {
         //this forumla is taken from xenoblade chronicles 3 but instead of the max level used being 99 mine is 100
@@ -52,6 +53,10 @@ public class CharacterData : MonoBehaviour
             skillParticleList[i] = characterRole.skillList[i].CreateParticle(transform);
             skillTimer[i] = 0;
         }
+    }
+    private void Start()
+    {
+        damageNumberGenerator = DamageNumberGenerator.instance;
     }
     public void UpdateStats()
     {
@@ -77,6 +82,11 @@ public class CharacterData : MonoBehaviour
                 break;
         }
     }
+    public void SetTolevel()
+    {
+        hp = levelHp;
+        atk = LevelAtk;
+    }
     public void GainHealth(float heal)
     {
        
@@ -89,7 +99,8 @@ public class CharacterData : MonoBehaviour
     public void LoseHealth(float damage)
     {
         hp -= damage * resistance;
-        if(hp < 0)
+        damageNumberGenerator.GeneratePlayerGetsHit(dmgSpawnPoint.position, "-"+(int)(damage * resistance));
+        if (hp < 0)
         {
             hp = 0;
         }
@@ -105,6 +116,10 @@ public class CharacterData : MonoBehaviour
     }
     public float GetMaxSkilLTime(int num)
     {
+        if (characterRole.skillList[num] == null)
+        {
+            return -1f;
+        }
         return characterRole.skillList[num].GetTimer();
     }
     public string GetSkillText(int num)
@@ -167,9 +182,15 @@ public class CharacterData : MonoBehaviour
         skillTimer[2] = skill.GetTimer();
         return true;
     }
+    //gets the position of the character
     public Vector3 GetPos()
     {
         return transform.position;
+    }
+    //gets the look at position of the character
+    public Vector3 GetLookAtPos()
+    {
+        return PartyManager.instance.memberRef[transform].playerNavScript.getLookAt().position;
     }
     public void ResetSkillsCD()
     {

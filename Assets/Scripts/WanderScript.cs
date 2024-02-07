@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WanderScript : MonoBehaviour
 {
-    [SerializeField]Transform wanderOrigin;
+    public Transform wanderOrigin;
     [SerializeField] float radius = 5;
     float timer = 0;
     [SerializeField]float timeToChange = 30;
